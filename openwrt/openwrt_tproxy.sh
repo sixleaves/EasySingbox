@@ -2,7 +2,7 @@
 
 #################################################
 # 描述: OpenWrt sing-box TProxy模式 配置脚本
-# 版本: 1.0.0
+# 版本: 1.1.0
 # 作者: Youtube: 七尺宇
 # 用途: 配置和启动 sing-box TProxy模式 代理服务
 #################################################
@@ -173,17 +173,26 @@ add chain inet sing-box output { type route hook output priority mangle; policy 
 # 添加规则
 table inet sing-box {
     chain prerouting {
+        # 确保 DHCP 数据包不被拦截（UDP 67/68）
+        udp dport { 67, 68 } accept comment "Allow DHCP traffic"
+        # 确保 DNS 和 TProxy 工作
         meta l4proto { tcp, udp } th dport 53 tproxy to :$TPROXY_PORT accept comment "DNS透明代理"
         fib daddr type local meta l4proto { tcp, udp } th dport $TPROXY_PORT reject
         fib daddr type local accept
+        # 放行局域网流量
         ip daddr { 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16 } accept
+        # 将其他流量标记并转发到 TProxy
         meta l4proto { tcp, udp } tproxy to :$TPROXY_PORT meta mark set $PROXY_FWMARK accept
     }
 
     chain output {
+        # 放行标记过的流量
         meta mark $PROXY_FWMARK accept
+        # 确保 DNS 查询正常
         meta l4proto { tcp, udp } th dport 53 meta mark set $PROXY_FWMARK accept
+        # 放行本地流量
         ip daddr { 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16 } accept
+        # 标记其余流量
         meta l4proto { tcp, udp } meta mark set $PROXY_FWMARK accept
     }
 }
