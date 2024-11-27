@@ -214,10 +214,6 @@ ip rule add fwmark $PROXY_FWMARK table $PROXY_ROUTE_TABLE
 ip route flush table $PROXY_ROUTE_TABLE >/dev/null 2>&1
 ip route add local default dev lo table $PROXY_ROUTE_TABLE
 
-# 清理缓存
-if [ -f "/etc/sing-box/cache.db" ]; then
-    rm -f /etc/sing-box/cache.db
-fi
 
 # 启动服务并将输出重定向到 /dev/null
 echo "$(timestamp) 启动 sing-box 服务..."
