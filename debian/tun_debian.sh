@@ -17,7 +17,7 @@ sudo systemctl stop sing-box
 # 配置参数
 BACKEND_URL="http://192.168.10.12:5000"  # 转换后端地址
 SUBSCRIPTION_URL=""  # 订阅地址
-TEMPLATE_URL="https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/config/singbox/config_tproxy.json"  # 配置文件（规则模板)
+TEMPLATE_URL="https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/config/singbox/config_tun.json"  # 配置文件（规则模板)
 
 # 检查 sing-box 服务状态和执行权限
 if ! command -v sing-box &> /dev/null; then
