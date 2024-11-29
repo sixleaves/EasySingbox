@@ -1,3 +1,8 @@
+*注意：如果你的后端没有科学环境，规则地址前记得添加镜像 https://ghp.ci/ 否则无法拉取。  
+例如：  
+```
+https://ghp.ci/https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/config/singbox/config_tproxy.json
+```
 openwrt运行singbox需求版本和依赖  
 
 固件版本:  
