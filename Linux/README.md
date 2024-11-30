@@ -3,6 +3,7 @@
 ```
 https://ghp.ci/https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/config/singbox/config_tproxy.json
 ```
+运行前，确保系统没有科学，后端、订阅、配置文件正常！  
 
 **自动更新订阅，重启系统自动重启singbox，执行如下命令即可！**
 
