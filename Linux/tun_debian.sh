@@ -17,15 +17,15 @@ TUN_PORT=7895                                                 # TUN 端口
 [ "$(id -u)" != "0" ] && { echo "错误: 此脚本需要 root 权限"; exit 1; }
 command -v sing-box &> /dev/null || { echo "错误: sing-box 未安装"; exit 1; }
 
-# 停止 sing-box 服务并执行清理操作
-systemctl stop sing-box && rm -f /etc/sing-box/cache.db
+# 停止 sing-box 服务
+systemctl stop sing-box
 
 # 构建完整的配置文件 URL
 FULL_URL="${BACKEND_URL}/config/${SUBSCRIPTION_URL}&file=${TEMPLATE_URL}"
 
-echo -e "\033[36m============================================\033[0m"
+echo -e "\033[36m==============================================================================\033[0m"
 echo -e "\033[32m生成完整订阅链接: \033[0m\033[31m$FULL_URL\033[0m"
-echo -e "\033[36m============================================\033[0m"
+echo -e "\033[36m==============================================================================\033[0m"
 
 # 备份当前配置
 [ -f "/etc/sing-box/config.json" ] && cp /etc/sing-box/config.json /etc/sing-box/config.json.backup
@@ -58,8 +58,10 @@ else
 fi
 
 # 常用命令
+echo -e "\033[36m================================================\033[0m"
 echo "* 检查singbox: systemctl status sing-box.service"
 echo "* 查看实时日志: journalctl -u sing-box --output cat -f"
 echo "* 检查配置文件: sing-box check -c /etc/sing-box/config.json"
 echo "* 运行singbox: sing-box run -c /etc/sing-box/config.json"
 echo "* 查看nf防火墙: nft list ruleset"
+echo -e "\033[36m================================================\033[0m"
