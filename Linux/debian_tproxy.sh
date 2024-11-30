@@ -25,6 +25,10 @@ systemctl stop sing-box && nft flush ruleset && rm -f /etc/sing-box/cache.db
 # 构建完整的配置文件 URL
 FULL_URL="${BACKEND_URL}/config/${SUBSCRIPTION_URL}&file=${TEMPLATE_URL}"
 
+echo -e "\033[36m============================================\033[0m"
+echo -e "\033[32m生成完整订阅链接: \033[0m\033[31m$FULL_URL\033[0m"
+echo -e "\033[36m============================================\033[0m"
+
 # 备份当前配置
 [ -f "/etc/sing-box/config.json" ] && cp /etc/sing-box/config.json /etc/sing-box/config.json.backup
 
