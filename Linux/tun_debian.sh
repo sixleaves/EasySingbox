@@ -54,8 +54,8 @@ else
 fi
 
 # 常用命令
-echo "检查singbox: systemctl status sing-box.service
-echo "查看实时日志: journalctl -u sing-box --output cat -f"
-echo "检查配置文件: sing-box check -c /etc/sing-box/config.json
-echo "运行singbox: sing-box run -c /etc/sing-box/config.json
-echo "查看nf防火墙: nft list ruleset
+echo "* 检查singbox: systemctl status sing-box.service"
+echo "* 查看实时日志: journalctl -u sing-box --output cat -f"
+echo "* 检查配置文件: sing-box check -c /etc/sing-box/config.json"
+echo "* 运行singbox: sing-box run -c /etc/sing-box/config.json"
+echo "* 查看nf防火墙: nft list ruleset"
