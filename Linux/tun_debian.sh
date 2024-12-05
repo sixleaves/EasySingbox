@@ -53,18 +53,18 @@ systemctl start sing-box
 if systemctl is-active --quiet sing-box
     echo -e "\033[32m sing-box 启动成功，运行模式: Tun \033[0m"
 else
-    echo -e "\033[31m 服务启动失败，请使用下方命令排查原因 \033[0m"
+    echo -e "\033[31m 服务启动失败，请使用下方命令排查原因! \033[0m"
 fi
 
 # 显示常用命令
-echo -e "\033[36m============================================================\033[0m"
+echo -e "\033[36m===========================================================\033[0m"
 echo -e "\033[33m* 常用命令：\033[0m"
 echo -e "\033[32m* 检查singbox: \033[0m\033[36msystemctl status sing-box.service\033[0m"
 echo -e "\033[32m* 查看实时日志: \033[0m\033[36mjournalctl -u sing-box --output cat -f\033[0m"
 echo -e "\033[32m* 检查配置文件: \033[0m\033[36msing-box check -c /etc/sing-box/config.json\033[0m"
 echo -e "\033[32m* 运行singbox: \033[0m\033[36msing-box run -c /etc/sing-box/config.json\033[0m"
 echo -e "\033[32m* 查看nf防火墙: \033[0m\033[36mnft list ruleset\033[0m"
-echo -e "\033[36m============================================================\033[0m"
+echo -e "\033[36m===========================================================\033[0m"
 
 # 启动失败时退出
 if [ $? -ne 0 ]; then
