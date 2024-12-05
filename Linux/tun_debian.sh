@@ -50,7 +50,7 @@ chmod 640 /etc/sing-box/config.json
 systemctl start sing-box
 
 # 检查服务是否启动成功
-if systemctl is-active --quiet sing-box
+if systemctl is-active --quiet sing-box; then
     echo -e "\033[36m===========================================================\033[0m"
     echo -e "\033[32m******** sing-box 启动成功，运行模式: Tun ********\033[0m"
 else
