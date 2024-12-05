@@ -10,7 +10,7 @@
 # 配置参数
 BACKEND_URL="http://192.168.10.12:5000"                       # 后端服务器地址
 SUBSCRIPTION_URL=""   # 订阅地址 Clash.Meta(mihomo)
-TEMPLATE_URL="https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/config/singbox/config_tun.json"  # 配置模板 URL
+TEMPLATE_URL="https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/config/singbox/config_tun.json"  # 配置模板（确保使用TUN入站）
 TUN_PORT=7895                                                 # TUN 端口
 
 # 检查是否以 root 权限运行并且 sing-box 是否已安装
@@ -34,12 +34,12 @@ echo -e "\033[34m===============================================================
 if curl -L --connect-timeout 10 --max-time 30 "$FULL_URL" -o /etc/sing-box/config.json; then
     echo "配置文件下载成功"
     if ! sing-box check -c /etc/sing-box/config.json; then
-        echo "配置文件验证失败，正在还原备份"
+        echo -e "\033[31m*** 配置文件验证失败，请检查配置文件格式及参数，正在还原备份 ***\033[0m"
         [ -f "/etc/sing-box/config.json.backup" ] && cp /etc/sing-box/config.json.backup /etc/sing-box/config.json
         exit 1
     fi
 else
-    echo "配置文件下载失败,请复制完整订阅链接，在浏览器是否可以正常打开"
+    echo -e "\033[31m*** 配置文件下载失败,请复制完整订阅链接，在浏览器是否可以正常打开! ***\033[0m"
     exit 1
 fi
 
@@ -51,9 +51,11 @@ systemctl start sing-box
 
 # 检查服务是否启动成功
 if systemctl is-active --quiet sing-box
-    echo -e "\033[32m sing-box 启动成功，运行模式: Tun \033[0m"
+    echo -e "\033[36m===========================================================\033[0m"
+    echo -e "\033[32m******** sing-box 启动成功，运行模式: Tun ********\033[0m"
 else
-    echo -e "\033[31m 服务启动失败，请使用下方命令排查原因! \033[0m"
+    echo -e "\033[36m===========================================================\033[0m"
+    echo -e "\033[31m******** 服务启动失败，请使用下方命令排查原因! ********\033[0m"
 fi
 
 # 显示常用命令
