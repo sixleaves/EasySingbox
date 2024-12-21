@@ -157,49 +157,59 @@ fi
 
 # 创建防火墙规则文件
 echo "$(timestamp) 创建防火墙规则文件..."
-cat > /etc/nftables.d/99-singbox.nft << EOF
+cat > /etc/nftables.d/99-singbox.nft << 'EOF'
 #!/usr/sbin/nft -f
 
-add table inet sing-box
-
-# 创建新的链
-add chain inet sing-box prerouting { type filter hook prerouting priority mangle; policy accept; }
-add chain inet sing-box output { type route hook output priority mangle; policy accept; }
-
-# 添加规则
 table inet sing-box {
+    set local_v4 {
+        type ipv4_addr
+        flags interval
+        elements = { 
+            127.0.0.0/8,
+            10.0.0.0/8,
+            172.16.0.0/12,
+            192.168.0.0/16,
+            169.254.0.0/16 
+        }
+    }
+
+    set local_v6 {
+        type ipv6_addr
+        flags interval
+        elements = { 
+            ::1,
+            fc00::/7,
+            fe80::/10 
+        }
+    }
+
     chain prerouting {
-        # 确保 DHCP 数据包不被拦截 UDP 67/68
-        udp dport { 67, 68 } accept comment "Allow DHCP traffic"
-        # 确保 DNS 和 TProxy 工作
-        meta l4proto { tcp, udp } th dport 53 tproxy to :$TPROXY_PORT accept comment "DNS透明代理"
-        fib daddr type local meta l4proto { tcp, udp } th dport $TPROXY_PORT reject
-        fib daddr type local accept
-        # 放行局域网流量
-        ip daddr { 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16 } accept
-        ip6 daddr { ::1, fc00::/7, fe80::/10 } accept
-        #放行所有经过 DNAT 的流量
-        ct status dnat accept comment "Allow forwarded traffic"
-        # 将其他流量标记并转发到 TProxy
-        meta l4proto { tcp, udp } tproxy to :$TPROXY_PORT meta mark set 0x1 accept
-        meta l4proto { tcp, udp } th dport { 80, 443 } tproxy to :$TPROXY_PORT meta mark set 0x1 accept
+        type filter hook prerouting priority mangle
+        policy accept
+
+        udp dport { 67, 68 } accept
+        meta l4proto {tcp, udp} th dport 53 tproxy to :7895 accept
+        ip daddr @local_v4 accept
+        ip6 daddr @local_v6 accept
+        ct status dnat accept
+        meta l4proto {tcp, udp} tproxy to :7895 meta mark set 0x1 accept
     }
 
     chain output {
-        # 放行标记过的流量
+        type route hook output priority mangle
+        policy accept
+        
         meta mark 0x1 accept
-        # 确保 DNS 查询正常
-        meta l4proto { tcp, udp } th dport 53 meta mark set 0x1 accept
-        # 放行本地流量
-        ip daddr { 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16 } accept
-        ip6 daddr { ::1, fc00::/7, fe80::/10 } accept
-        #放行所有经过 DNAT 的流量
-        ct status dnat accept comment "Allow forwarded traffic"
-        # 标记其余流量
-        meta l4proto { tcp, udp } meta mark set 0x1 accept
+        meta l4proto {tcp, udp} th dport 53 meta mark set 0x1 accept
+        ip daddr @local_v4 accept
+        ip6 daddr @local_v6 accept
+        ct status dnat accept
+        meta l4proto {tcp, udp} meta mark set 0x1 accept
     }
 }
 EOF
+
+chmod 644 /etc/nftables.d/99-singbox.nft
 
 # 设置权限
 chmod 644 /etc/nftables.d/99-singbox.nft
