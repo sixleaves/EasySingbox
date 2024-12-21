@@ -209,8 +209,6 @@ table inet sing-box {
 }
 EOF
 
-chmod 644 /etc/nftables.d/99-singbox.nft
-
 # 设置权限
 chmod 644 /etc/nftables.d/99-singbox.nft
 
