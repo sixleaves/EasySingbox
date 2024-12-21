@@ -236,14 +236,18 @@ ip -6 rule add fwmark $PROXY_FWMARK table $PROXY_ROUTE_TABLE
 ip -6 route flush table $PROXY_ROUTE_TABLE >/dev/null 2>&1
 ip -6 route add local default dev lo table $PROXY_ROUTE_TABLE
 
-# 启动服务并将输出重定向到 /dev/null
+# 启动服务
 echo "$(timestamp) 启动 sing-box 服务..."
-sing-box run -c "$CONFIG_FILE" >/dev/null 2>&1 &
+/sbin/ujail -n sing-box \
+ -S \
+ -P /var/run \
+ -p $TPROXY_PORT \
+ -r /usr/bin/sing-box run -c "$CONFIG_FILE" >/dev/null 2>&1 &
 
-# 检查服务状态
+# 检查服务状态 
 sleep 2
 if pgrep -x "sing-box" > /dev/null; then
-    echo "$(timestamp) sing-box 启动成功 运行模式--TProxy"
+   echo "$(timestamp) sing-box 启动成功 运行模式--TProxy(沙盒运行)"
 else
-    error_exit "sing-box 启动失败，请检查日志"
+   error_exit "sing-box 启动失败，请检查日志"
 fi
